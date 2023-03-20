@@ -36,17 +36,34 @@ const Item3 = new Item({
 
 const defaultItems = [Item1, Item2, Item3];
 
-Item.insertMany(defaultItems)
-.then(() => {
-    console.log("Successfully inserted");
-})
-.catch((err) => {
-    console.log("Error inserting");
-});
+
+
 
 app.get('/', (req, res) => {
+Item.find()
+.then((results) => {
+    if(results.length===0){
+        Item.insertMany(defaultItems)
+        .then(() => {
+            console.log("Successfully inserted");
+        })
+        .catch((err) => {
+            console.log("Error inserting");
+        });
+        res.redirect("/");
+    }else{
+        console.log(results);
+        results.forEach(function(result){
+        res.render("list", {listTitle: "Today", newListItems: results});
+    });
+    }
+    
+})
+.catch((err) => {
+    console.log(err);
+});
     //let day = date.getDay();
-    res.render("list", {listTitle: "Today", newListItems: items});
+    
 });
 
 app.post('/', (req, res) => {
@@ -55,7 +72,7 @@ app.post('/', (req, res) => {
         workItems.push(item);
         res.redirect("/work");
     }else{
-        items.push(item);
+        // items.push(item);
         res.redirect("/");
     }
 });
@@ -70,6 +87,6 @@ app.post('/work', (req, res) => {
     res.redirect("/work");
 });
 
-app.listen(3000, function () {
+app.listen(3001, function () {
     console.log("Server started on port 3000");
 });
