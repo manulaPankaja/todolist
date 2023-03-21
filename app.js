@@ -67,14 +67,19 @@ Item.find()
 });
 
 app.post('/', (req, res) => {
-    let item = req.body.newItem;
-    if(req.body.list === "Work"){
-        workItems.push(item);
-        res.redirect("/work");
-    }else{
-        // items.push(item);
-        res.redirect("/");
-    }
+    const itemName = req.body.newItem;
+    const item = new Item({
+        name:itemName
+    });
+    item.save();
+    res.redirect("/");
+    // if(req.body.list === "Work"){
+    //     workItems.push(item);
+    //     res.redirect("/work");
+    // }else{
+    //     // items.push(item);
+    //     res.redirect("/");
+    // }
 });
 
 app.get('/work', (req, res) => {
@@ -87,6 +92,6 @@ app.post('/work', (req, res) => {
     res.redirect("/work");
 });
 
-app.listen(3001, function () {
+app.listen(3000, function () {
     console.log("Server started on port 3000");
 });
