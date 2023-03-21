@@ -40,31 +40,26 @@ const defaultItems = [Item1, Item2, Item3];
 
 
 app.get('/', (req, res) => {
-Item.find()
-.then((results) => {
-    if(results.length===0){
-        Item.insertMany(defaultItems)
-        .then(() => {
-            console.log("Successfully inserted");
-        })
-        .catch((err) => {
-            console.log("Error inserting");
-        });
-        res.redirect("/");
-    }else{
-        console.log(results);
-        results.forEach(function(result){
-        res.render("list", {listTitle: "Today", newListItems: results});
-    });
-    }
-    
-})
-.catch((err) => {
-    console.log(err);
-});
-    //let day = date.getDay();
-    
-});
+    Item.find()
+      .then((results) => {
+        if(results.length===0){
+          Item.insertMany(defaultItems)
+            .then(() => {
+              console.log("Successfully inserted");
+            })
+            .catch((err) => {
+              console.log("Error inserting");
+            });
+          res.redirect("/");
+        } else {
+          res.render("list", {listTitle: "Today", newListItems: results});
+        } 
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+  
 
 app.post('/', (req, res) => {
     const itemName = req.body.newItem;
@@ -80,6 +75,23 @@ app.post('/', (req, res) => {
     //     // items.push(item);
     //     res.redirect("/");
     // }
+});
+
+app.post('/delete', function(req, res){
+    const checkedItemId = req.body.checkBox;
+    Item.findByIdAndRemove(checkedItemId)
+    .then((removedItem) => {
+        if (!removedItem) {
+        console.log("No item was removed.");
+        } else {
+        console.log(`Removed item: ${removedItem}`);
+        }
+    })
+    .catch((error) => {
+        console.error(`Error removing item: ${error}`);
+    });
+    res.redirect("/");
+
 });
 
 app.get('/work', (req, res) => {
