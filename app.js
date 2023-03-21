@@ -70,11 +70,29 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
     const itemName = req.body.newItem;
+    const listName = req.body.list;
+
     const item = new Item({
         name:itemName
     });
-    item.save();
-    res.redirect("/");
+
+    if (listName==="Today"){
+        item.save();
+        res.redirect("/");
+    }else{
+        List.findOne({name:listName})
+        .then((lists) => {
+            lists.items.push(item);
+            lists.save();
+            res.redirect("/"+ listName);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+    }
+
+    // item.save();
+    // res.redirect("/");
     // if(req.body.list === "Work"){
     //     workItems.push(item);
     //     res.redirect("/work");
