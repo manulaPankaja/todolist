@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose'); //mongoose
+const _ =require("lodash"); //Lodash
 
 const app = express();
 
@@ -148,7 +149,7 @@ app.post('/delete', function(req, res){
 // });
 
 app.get('/:customListName', (req, res) => {
-    const customListName = req.params.customListName;
+    const customListName = _.capitalize(req.params.customListName); //Use lodash to use first letter to capital
 
     List.findOne({ name: customListName })
         .then((lists) => {
@@ -171,11 +172,11 @@ app.get('/:customListName', (req, res) => {
     
 });
 
-app.post('/work', (req, res) => { 
-    let item = req.body.newItem;
-    workItems.push(item);
-    res.redirect("/work");
-});
+// app.post('/work', (req, res) => { 
+//     let item = req.body.newItem;
+//     workItems.push(item);
+//     res.redirect("/work");
+// });
 
 app.listen(3000, function () {
     console.log("Server started on port 3000");
