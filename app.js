@@ -1,29 +1,30 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose'); //mongoose
-//const date=require(__dirname +'/date.js');
-
 
 const app = express();
-
-// const items = ["Buy food", "Cook food", "Eat food"];
-// const workItems = [];
 
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public")); 
 
-//mongoose start
 
+
+
+
+//mongoose start
 mongoose.connect("mongodb://127.0.0.1:27017/todolistDB")
 
+//defines a schema for mongoose called itemsSchema
 const itemsSchema = new mongoose.Schema({
     name:String
 });
 
+//creates a Mongoose model called "Item" using the previously defined "itemsSchema"
 const Item = mongoose.model("Item", itemsSchema);
 
+//creating new instance of the Mongoose model "Item" and assigns it to a variable called "Item1, Item2, Item3"
 const Item1 = new Item({
     name:"Welcome to your todolist!"
 })
@@ -34,15 +35,20 @@ const Item3 = new Item({
     name:"<-- Hit this to delete an item"
 })
 
+
+
 const defaultItems = [Item1, Item2, Item3];
 
+
+
+//defines a schema for mongoose called listSchema
 const listSchema = new mongoose.Schema({
     name: String,
     items: [itemsSchema]
 });
 
+//creates a Mongoose model called "List" using the previously defined "listSchema"
 const List = mongoose.model("List", listSchema);
-
 
 
 
@@ -72,6 +78,8 @@ app.post('/', (req, res) => {
     const itemName = req.body.newItem;
     const listName = req.body.list;
 
+    
+//creating new instance of the Mongoose model "Item" and assigns it to a variable called "Item"
     const item = new Item({
         name:itemName
     });
@@ -104,7 +112,10 @@ app.post('/', (req, res) => {
 
 app.post('/delete', function(req, res){
     const checkedItemId = req.body.checkBox;
-    Item.findByIdAndRemove(checkedItemId)
+    const listName = req.body.listName;
+
+    if(listName === "Today"){
+        Item.findByIdAndRemove(checkedItemId)
     .then((removedItem) => {
         if (!removedItem) {
         console.log("No item was removed.");
@@ -116,6 +127,19 @@ app.post('/delete', function(req, res){
         console.error(`Error removing item: ${error}`);
     });
     res.redirect("/");
+    }else{
+        List.findOneAndUpdate({ name: listName },{ $pull: { items: { _id: checkedItemId } } },{ new: true, useFindAndModify: false })
+            .then(foundList => {
+                console.log(foundList);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+            res.redirect("/"+ listName);
+        
+    }
+
+    
 
 });
 
