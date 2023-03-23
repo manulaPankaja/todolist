@@ -80,7 +80,7 @@ app.post('/', (req, res) => {
     const listName = req.body.list;
 
     
-//creating new instance of the Mongoose model "Item" and assigns it to a variable called "Item"
+//creating new instance of the Mongoose model "Item" and assigns it to a constant called "Item"
     const item = new Item({
         name:itemName
     });
