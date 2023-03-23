@@ -15,7 +15,7 @@ app.use(express.static("public"));
 
 
 //mongoose start
-mongoose.connect("mongodb://127.0.0.1:27017/todolistDB")
+mongoose.connect("mongodb://127.0.0.1:27017/todolistDB") //mongoose.connect("mongodb+srv://admin-manula:test123@cluster0.xvpso1b.mongodb.net/todolistDB")
 
 //defines a schema for mongoose called itemsSchema
 const itemsSchema = new mongoose.Schema({
